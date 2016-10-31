@@ -17,3 +17,7 @@ var products = [
 	"Quantity" : "1"
 	}
 	];
+
+module.exports = {
+	getProducts: products
+};
