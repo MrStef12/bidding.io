@@ -23,7 +23,7 @@ handler_get = function (request, response) {
         var surl = request.url.split("/");
 	//magic number...
         if(surl[1] == "biddings" && surl.length == 3) {
-            var id = parseInt(surl[2]);
+            var id = parseInt(surl[2]) - 1;
             if(products.hasOwnProperty(id)) {
                 response.end(JSON.stringify(products[id]));
             } else {
@@ -37,7 +37,15 @@ handler_get = function (request, response) {
 
 handler_put = function (request, response) {
     request.on('data', function(data) {
-        console.log(''+data);
+	var biddingPrice = parseInt(data);
+	var surl = request.url.split("/");
+	var id = parseInt(surl[2]) - 1;
+
+	if(surl[1] == "biddings" && surl.length == 3 && !isNaN(biddingPrice)) {
+		products[id].Price = biddingPrice;
+	}
+	console.log(products[id]);
+        console.log('BiddingPrice = '+data);
         send_header(response);
         response.end(JSON.stringify(3));
     });
