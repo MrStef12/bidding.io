@@ -1,5 +1,6 @@
 var products = [
 	{
+	"ID" : "1",
 	"Name" : "Computer",
 	"Price" : "5",
 	"Description" : "A good computer",
@@ -9,6 +10,7 @@ var products = [
 	
 	},
 	{
+	"ID" : "2",
 	"Name" : "Water bottle",
 	"Price" : "500",
 	"Description" : "Straight from the himalayas",
