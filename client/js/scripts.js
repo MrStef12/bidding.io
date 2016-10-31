@@ -31,6 +31,7 @@ do_get_all = function () {
     get(thisurl, function (content) {
         var htmllist = document.getElementById("auctionList");
         htmllist.innerHTML = ""; //Clear the list
+        console.log(content);
         var biddings = JSON.parse(content);
     });
 };
@@ -38,10 +39,11 @@ do_get_all = function () {
 do_put = function () {
     var textarea = document.getElementById('data');
     put(url, textarea.value, function (content) {
-        textarea.value = content;
+        // Put action!
     });
 };
 
 window.onload = function() {
     console.log("Welcome to bidding.io! Loading content...");
+    do_get_all();
 }
