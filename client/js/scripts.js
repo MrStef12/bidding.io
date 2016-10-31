@@ -21,7 +21,7 @@ put = function(url, data, callback) {
 };
 
 do_get = function (id) {
-    var thisurl = url+"/biddings/"+id;
+    var thisurl = url+"/bidding/"+id;
     get(thisurl, function (content) {
         // TODO once returned
     });
@@ -33,6 +33,19 @@ do_get_all = function () {
         htmllist.innerHTML = ""; //Clear the list
         console.log(content);
         var biddings = JSON.parse(content);
+        console.log(biddings);
+        var html = "";
+        for(var i in biddings) {
+            var date = new Date(biddings[i].EndDate);
+            html += "<tr>";
+            html += "<td>"+biddings[i].ID+"</td>";
+            html += "<td>"+biddings[i].Name+"</td>";
+            html += "<td>"+biddings[i].Price+"</td>";
+            html += "<td>"+date.getDate()+"/"+date.getMonth()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"</td>";
+            html += "<td><button type='button' class='btn btn-primary' onclick='do_get("+biddings[i].ID+")'>See more</button></td>";
+            html += "</tr>";
+        }
+        htmllist.innerHTML += html;
     });
 };
 
