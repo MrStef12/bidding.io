@@ -8,15 +8,16 @@ var products = content.getProducts;
 var http   = require('http');
 const PORT = 9998;
 
-send_header = function (response) {
-    response.writeHead(200, {'Content-Type': 'application/json',
+send_header = function (response, responseCode) {
+    response.writeHead(responseCode, {'Content-Type': 'application/json',
                              'Access-Control-Allow-Origin': '*',
                              'Access-Control-Allow-Methods': 'GET,PUT,POST'});
+	console.log("response code " + responseCode);
 }
 
 // handlers
 handler_get = function (request, response) {
-    send_header(response);
+    send_header(response, 200);
     if(request.url == "/biddings") {
         response.end(JSON.stringify(products));
     } else {
@@ -40,29 +41,29 @@ handler_put = function (request, response) {
 	var biddingPrice = parseInt(data);
 	var surl = request.url.split("/");
 	var id = parseInt(surl[2]) - 1;
+	var oldPrice = products[id].Price;
 
-	if(surl[1] == "bidding" && surl.length == 3 && !isNaN(biddingPrice)) {
+	if(surl[1] == "bidding" && surl.length == 3 && !isNaN(biddingPrice) && oldPrice < biddingPrice) {
 		products[id].Price = biddingPrice;
+		send_header(response, 200);
+		response.end(JSON.stringify(3));
 	} else {
-		response.end("400 bad request");
+		send_header(response, 400);
+		response.end("400 bad request");	
 	}
-	console.log(products[id]);
-        console.log('BiddingPrice = '+data);
-        send_header(response);
-        response.end(JSON.stringify(3));
     });
 };
 
 handler_post = function (request, response) {
     request.on('data', function(data) {
         console.log(''+data);
-        send_header(response);
+        send_header(response, 200);
         response.end(JSON.stringify(3));
     });
 };
 
 handler_options = function (request, response) {
-    send_header(response);
+    send_header(response, 200);
     response.end(null);
 };
 
