@@ -1,4 +1,4 @@
-var url = "http://localhost:9998/";
+var url = "http://localhost:9998";
 
 get = function(url, callback) {
     var xmlHttp = new XMLHttpRequest();
