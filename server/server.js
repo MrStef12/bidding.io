@@ -41,8 +41,10 @@ handler_put = function (request, response) {
 	var surl = request.url.split("/");
 	var id = parseInt(surl[2]) - 1;
 
-	if(surl[1] == "biddings" && surl.length == 3 && !isNaN(biddingPrice)) {
+	if(surl[1] == "bidding" && surl.length == 3 && !isNaN(biddingPrice)) {
 		products[id].Price = biddingPrice;
+	} else {
+		response.end("400 bad request");
 	}
 	console.log(products[id]);
         console.log('BiddingPrice = '+data);
