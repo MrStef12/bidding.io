@@ -4,6 +4,7 @@
 
 var content = require('./content');
 var products = content.getProducts;
+
 var http   = require('http');
 const PORT = 9998;
 
@@ -16,14 +17,15 @@ send_header = function (response) {
 // handlers
 handler_get = function (request, response) {
     send_header(response);
-    if(request.url == "/adressbook") {
-        response.end(JSON.stringify(adressbook));
+    if(request.url == "/biddings") {
+        response.end(JSON.stringify(products));
     } else {
         var surl = request.url.split("/");
-        if(surl[1] == "adressbook" && surl.length == 3) {
+	//magic number...
+        if(surl[1] == "biddings" && surl.length == 3) {
             var id = parseInt(surl[2]);
-            if(adressbook.hasOwnProperty(id)) {
-                response.end(JSON.stringify(adressbook[id]));
+            if(products.hasOwnProperty(id)) {
+                response.end(JSON.stringify(products[id]));
             } else {
                 response.end("{}");
             }
@@ -32,6 +34,7 @@ handler_get = function (request, response) {
         }
     }
 };
+
 handler_put = function (request, response) {
     request.on('data', function(data) {
         console.log(''+data);
@@ -39,6 +42,7 @@ handler_put = function (request, response) {
         response.end(JSON.stringify(3));
     });
 };
+
 handler_post = function (request, response) {
     request.on('data', function(data) {
         console.log(''+data);
@@ -46,6 +50,7 @@ handler_post = function (request, response) {
         response.end(JSON.stringify(3));
     });
 };
+
 handler_options = function (request, response) {
     send_header(response);
     response.end(null);
@@ -55,7 +60,6 @@ dispatch = {
     'GET':     handler_get,
     'PUT':     handler_put,
     'POST':    handler_post,
-    'DELETE':  handler_delete,
     'OPTIONS': handler_options,
 };
 
