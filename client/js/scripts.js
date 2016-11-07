@@ -38,7 +38,7 @@ do_get_all = function () {
         for(var i in biddings) {
             var date = new Date(biddings[i].EndDate);
             html += "<tr>";
-            html += "<td>"+biddings[i].ID+"</td>";
+            html += "<th scope='row'>"+biddings[i].ID+"</td>";
             html += "<td>"+biddings[i].Name+"</td>";
             html += "<td>"+biddings[i].Price+"</td>";
             html += "<td>"+date.getDate()+"/"+date.getMonth()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"</td>";
