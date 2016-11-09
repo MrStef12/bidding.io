@@ -23,7 +23,7 @@ handler_get = function (request, response) {
     } else {
         var surl = request.url.split("/");
 	//magic number...
-        if(surl[1] == "biddings" && surl.length == 3) {
+        if(surl[1] == "bidding" && surl.length == 3) {
             var id = parseInt(surl[2]) - 1;
             if(products.hasOwnProperty(id)) {
                 response.end(JSON.stringify(products[id]));
