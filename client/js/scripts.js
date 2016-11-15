@@ -20,10 +20,28 @@ put = function(url, data, callback) {
     xmlHttp.send(data);
 };
 
+var activeBidID;
+
 do_get = function (id) {
     var thisurl = url+"/bidding/"+id;
     get(thisurl, function (content) {
-        // TODO once returned
+        document.getElementById("auctionDetails").style.display = "block";
+        document.getElementById("auctionNotYet").style.display = "none";
+        var title = document.getElementById("auctionTitle");
+        var desc = document.getElementById("auctionDesc");
+        var created = document.getElementById("auctionCreateDate");
+        var end = document.getElementById("auctionEndDate");
+        var quantity = document.getElementById("auctionQuantity");
+        var price = document.getElementById("auctionPrice");
+
+        var bid = JSON.parse(content);
+        activeBidID = parseInt(bid.ID);
+        title.innerText = bid.Name;
+        desc.innerText = bid.Description;
+        created.innerText = bid.CreatedDate;
+        end.innerText = bid.EndDate;
+        quantity.innerText = bid.Quantity;
+        price.innerText = bid.Price;
     });
 };
 do_get_all = function () {
@@ -31,9 +49,7 @@ do_get_all = function () {
     get(thisurl, function (content) {
         var htmllist = document.getElementById("auctionList");
         htmllist.innerHTML = ""; //Clear the list
-        console.log(content);
         var biddings = JSON.parse(content);
-        console.log(biddings);
         var html = "";
         for(var i in biddings) {
             var date = new Date(biddings[i].EndDate);
@@ -50,12 +66,22 @@ do_get_all = function () {
 };
 
 do_put = function () {
-    var textarea = document.getElementById('data');
-    put(url, textarea.value, function (content) {
-        // Put action!
-    });
-};
+    if(activeBidID != undefined) {
+        var thisurl = url+"/bidding/"+activeBidID;
+        var userBidField = document.getElementById('userBid');
+        var userBid = parseInt(userBidField.value);
 
+        put(thisurl, userBid, function (content) {
+            alert("Bid has been placed");
+        });
+    }
+};
+window.setInterval(function() {
+    do_get_all();
+    if(activeBidID != undefined) {
+        do_get(activeBidID);
+    }
+}, 1000);
 window.onload = function() {
     console.log("Welcome to bidding.io! Loading content...");
     do_get_all();
