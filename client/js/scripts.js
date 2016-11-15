@@ -1,8 +1,8 @@
 var url = "http://localhost:9998";
 
-get = function(url, callback) {
+get = function (url, callback) {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
+    xmlHttp.onreadystatechange = function () {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback(xmlHttp.responseText);
     }
@@ -10,11 +10,16 @@ get = function(url, callback) {
     xmlHttp.send(null);
 };
 
-put = function(url, data, callback) {
+put = function (url, data, callback) {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            callback(xmlHttp.responseText);
+    xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                callback(xmlHttp.responseText);
+            } else {
+                alert("Could not place bet: " + xmlHttp.statusText);
+            }
+        }
     }
     xmlHttp.open("PUT", url, true); // true for asynchronous 
     xmlHttp.send(data);
@@ -23,7 +28,7 @@ put = function(url, data, callback) {
 var activeBidID;
 
 do_get = function (id) {
-    var thisurl = url+"/bidding/"+id;
+    var thisurl = url + "/bidding/" + id;
     get(thisurl, function (content) {
         document.getElementById("auctionDetails").style.display = "block";
         document.getElementById("auctionNotYet").style.display = "none";
@@ -45,20 +50,20 @@ do_get = function (id) {
     });
 };
 do_get_all = function () {
-    var thisurl = url+"/biddings";
+    var thisurl = url + "/biddings";
     get(thisurl, function (content) {
         var htmllist = document.getElementById("auctionList");
         htmllist.innerHTML = ""; //Clear the list
         var biddings = JSON.parse(content);
         var html = "";
-        for(var i in biddings) {
+        for (var i in biddings) {
             var date = new Date(biddings[i].EndDate);
             html += "<tr>";
-            html += "<th scope='row'>"+biddings[i].ID+"</td>";
-            html += "<td>"+biddings[i].Name+"</td>";
-            html += "<td>"+biddings[i].Price+"</td>";
-            html += "<td>"+date.getDate()+"/"+date.getMonth()+"/"+date.getFullYear()+" "+date.getHours()+":"+date.getMinutes()+"</td>";
-            html += "<td><button type='button' class='btn btn-primary' onclick='do_get("+biddings[i].ID+")'>See more</button></td>";
+            html += "<th scope='row'>" + biddings[i].ID + "</td>";
+            html += "<td>" + biddings[i].Name + "</td>";
+            html += "<td>" + biddings[i].Price + "</td>";
+            html += "<td>" + date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + "</td>";
+            html += "<td><button type='button' class='btn btn-primary' onclick='do_get(" + biddings[i].ID + ")'>See more</button></td>";
             html += "</tr>";
         }
         htmllist.innerHTML += html;
@@ -66,23 +71,26 @@ do_get_all = function () {
 };
 
 do_put = function () {
-    if(activeBidID != undefined) {
-        var thisurl = url+"/bidding/"+activeBidID;
+    if (activeBidID != undefined) {
+        var thisurl = url + "/bidding/" + activeBidID;
         var userBidField = document.getElementById('userBid');
         var userBid = parseInt(userBidField.value);
+        if (!isNaN(userBid)) {
+            put(thisurl, userBid, function (content) {
 
-        put(thisurl, userBid, function (content) {
-            alert("Bid has been placed");
-        });
+            });
+        } else {
+            alert("Could not place bet. Please input a valid number.");
+        }
     }
 };
-window.setInterval(function() {
+window.setInterval(function () {
     do_get_all();
-    if(activeBidID != undefined) {
+    if (activeBidID != undefined) {
         do_get(activeBidID);
     }
 }, 1000);
-window.onload = function() {
+window.onload = function () {
     console.log("Welcome to bidding.io! Loading content...");
     do_get_all();
 }
