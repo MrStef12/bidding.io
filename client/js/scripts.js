@@ -18,6 +18,7 @@ put = function (url, data, callback) {
                 callback(xmlHttp.responseText);
             } else {
                 alert("Could not place bet: " + xmlHttp.statusText);
+                console.error("Failed to place bid.", xmlHttp);
             }
         }
     }
@@ -28,6 +29,7 @@ put = function (url, data, callback) {
 var activeBidID;
 
 do_get = function (id) {
+    console.log("Refreshing auction ID "+id);
     var thisurl = url + "/bidding/" + id;
     get(thisurl, function (content) {
         document.getElementById("auctionDetails").style.display = "block";
@@ -43,13 +45,14 @@ do_get = function (id) {
         activeBidID = parseInt(bid.ID);
         title.innerText = bid.Name;
         desc.innerText = bid.Description;
-        created.innerText = bid.CreatedDate;
-        end.innerText = bid.EndDate;
+        created.innerText = parseDate(bid.CreatedDate);
+        end.innerText = parseDate(bid.EndDate);
         quantity.innerText = bid.Quantity;
         price.innerText = bid.Price;
     });
 };
 do_get_all = function () {
+    console.log("Refreshing all auctions");
     var thisurl = url + "/biddings";
     get(thisurl, function (content) {
         var htmllist = document.getElementById("auctionList");
@@ -62,7 +65,7 @@ do_get_all = function () {
             html += "<th scope='row'>" + biddings[i].ID + "</td>";
             html += "<td>" + biddings[i].Name + "</td>";
             html += "<td>" + biddings[i].Price + "</td>";
-            html += "<td>" + date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + "</td>";
+            html += "<td>" + parseDate(biddings[i].EndDate) + "</td>";
             html += "<td><button type='button' class='btn btn-primary' onclick='do_get(" + biddings[i].ID + ")'>See more</button></td>";
             html += "</tr>";
         }
@@ -77,19 +80,25 @@ do_put = function () {
         var userBid = parseInt(userBidField.value);
         if (!isNaN(userBid)) {
             put(thisurl, userBid, function (content) {
-
+                console.info("Bid placed successfully!")
             });
         } else {
             alert("Could not place bet. Please input a valid number.");
         }
     }
 };
+
+parseDate = function(dateString) {
+    var date = new Date(dateString);
+    return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes();
+}
+
 window.setInterval(function () {
     do_get_all();
     if (activeBidID != undefined) {
         do_get(activeBidID);
     }
-}, 1000);
+}, 2000);
 window.onload = function () {
     console.log("Welcome to bidding.io! Loading content...");
     do_get_all();
